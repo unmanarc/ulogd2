@@ -11,6 +11,16 @@ Source0: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/%{name}-%{ver
 Source1: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd.init
 Patch0: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd-rpm.patch
 
+%define cmake cmake
+
+%if 0%{?rhel} == 6
+%define cmake cmake3
+%endif
+
+%if 0%{?rhel} == 7
+%define cmake cmake3
+%endif
+
 BuildRequires: libnetfilter_conntrack-devel >= 0.0.95
 BuildRequires: libnetfilter_log-devel >= 1.0.0
 BuildRequires: libnfnetlink-devel >= 0.0.39
