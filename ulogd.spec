@@ -6,8 +6,8 @@ License: GPLv2+
 Group: System Environment/Daemons
 URL: http://www.netfilter.org/projects/%{name}/
 Source0: http://ftp.netfilter.org/pub/%{name}/%{name}-%{version}.tar.bz2
-Source1: %{name}.init
-Patch0: sgmldoc.diff
+Source1: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd.init
+Patch0: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd-rpm.patch
 
 BuildRequires: libnetfilter_conntrack-devel >= 0.0.95
 BuildRequires: libnetfilter_log-devel >= 1.0.0
