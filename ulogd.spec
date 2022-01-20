@@ -17,6 +17,7 @@ BuildRequires: libnfnetlink-devel >= 0.0.39
 BuildRequires: libnetfilter_acct-devel >= 1.0.1 
 BuildRequires: sgml-tools
 BuildRequires: libmnl-devel
+BuildRequires: %{cmake} gcc-c++ gcc
 
 Requires(post): /sbin/service
 Requires(post): /sbin/chkconfig
