@@ -1,0 +1,103 @@
+#!/bin/sh
+#
+# chkconfig: - 81 19
+# description: ulogd is the userspace logging daemon for netfilter/iptables
+### BEGIN INIT INFO
+# Provides: ulogd
+# Required-Start: $local_fs $network $remote_fs
+# Should-Start: $syslog
+# Required-Stop: $local_fs $network $remote_fs
+# Should-Stop: $syslog
+# Default-Start:
+# Default-Stop: 0 1 6
+# Short-Description: start and stop ulogd
+# Description: ulogd is the userspace logging daemon for netfilter/iptables
+### END INIT INFO
+#
+
+. /etc/rc.d/init.d/functions
+
+RETVAL=0
+prog="ulogd"
+lockfile=/var/lock/subsys/ulogd
+
+ULOGD=/usr/sbin/$prog
+
+# Check that networking is up.
+. /etc/sysconfig/network
+[ "$NETWORKING" = "no" ] && exit 0
+
+[ -x $ULOGD ] || exit 1
+[ -f /etc/$prog.conf ] || exit 2
+
+start()
+{
+	printf "Starting $prog: "
+	daemon $ULOGD -d && success || failure
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch $lockfile
+	printf "\n"
+}
+
+stop()
+{
+	printf "Stopping $prog: "
+	killproc $ULOGD
+	RETVAL=$?
+
+	[ $RETVAL -eq 0 ] && rm -f $lockfile
+	printf "\n"
+}
+
+reload()
+{
+	printf "Reloading $prog: "
+	pid=$(pidof ulogd)
+	if [ "x$pid" != "x" ]; then
+		killproc $ULOGD -HUP
+	else
+		failure "Reloading $prog"
+	fi
+	RETVAL=$?
+	printf "\n"
+}
+
+restart()
+{
+	stop
+	start
+}
+
+case "$1" in
+	start)
+	start
+	;;
+
+	stop)
+	stop
+	;;
+
+	restart)
+	restart
+	;;
+
+	condrestart|try-restart)
+	if [ -f $lockfile ]; then
+		restart
+	fi
+	;;
+
+	reload|force-reload)
+	reload
+	;;
+
+	status)
+	status $ULOGD
+	;;
+
+	*)
+	printf "Usage: $0 {start|stop|restart|reload|force-reload|condrestart|try-restart|status}\n"
+	RETVAL=2
+esac
+
+exit $RETVAL
