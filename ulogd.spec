@@ -1,5 +1,5 @@
 Summary: Userspace logging daemon for netfilter
-Name: ulogd
+Name: ulogd2
 Version: 2.0.7
 Release: 2%{?dist}
 License: GPLv2+
@@ -7,7 +7,7 @@ Group: System Environment/Daemons
 URL: http://www.netfilter.org/projects/%{name}/
 #Source0: http://ftp.netfilter.org/pub/%{name}/%{name}-%{version}.tar.bz2
 # http not allowed in COPR.
-Source0: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/%{name}-%{version}.tar.bz2
+Source0: https://www.netfilter.org/projects/ulogd/files/ulogd-2.0.7.tar.bz2
 Source1: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd.init
 Patch0: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd-rpm.patch
 
