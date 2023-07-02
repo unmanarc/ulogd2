@@ -42,14 +42,14 @@ enable support for connection tracking event delivery; ctnetlink and the NFLOG
 target in your Linux kernel 2.6.x or load their respective modules. The
 deprecated ULOG target (which has been superseded by NFLOG) is also supported.
 
-%package libdbi
-Summary: Libdbi framework output plugin for %{name}
-Group: System Environment/Daemons
-BuildRequires: libdbi-devel
-Requires: %{name} = %{version}
-%description libdbi
-%{name}-libdbi is a libdbi output plugin for %{name}. It enables logging of
-firewall information through a libdbi interface.
+#%package libdbi
+#Summary: Libdbi framework output plugin for %{name}
+#Group: System Environment/Daemons
+#BuildRequires: libdbi-devel
+#Requires: %{name} = %{version}
+#%description libdbi
+#%{name}-libdbi is a libdbi output plugin for %{name}. It enables logging of
+#firewall information through a libdbi interface.
 
 %package mysql
 Summary: MySQL output plugin for %{name}
@@ -103,9 +103,7 @@ firewall information into an SQLITE database.
 %configure \
    --disable-static \
    --enable-shared \
-   --with-dbi-lib=%{_libdir} \
-   --with-pcap-lib=%{_libdir} \
-   --with-sqlite3-lib=%{_libdir}
+   --enable-dbi=no
 
 %{__make} %{?_smp_mflags}
 %{__make} %{?_smp_mflags} -C doc
@@ -151,7 +149,6 @@ fi
 %files
 %defattr(0755,root,root,0755)
 %{_sbindir}/%{name}
-%{_initrddir}/%{name}
 %{_libdir}/%{name}
 %defattr(0644,root,root,0755)
 %{_unitdir}/%{name}.service
@@ -169,11 +166,11 @@ fi
 %exclude %{_libdir}/%{name}/%{name}_output_PCAP.so
 %exclude %{_libdir}/%{name}/%{name}_output_SQLITE3.so
 
-%files libdbi
-%defattr(0755,root,root,0755)
-%{_libdir}/%{name}/%{name}_output_DBI.so
-%defattr(0644,root,root,0755)
-%doc COPYING
+#%files libdbi
+#%defattr(0755,root,root,0755)
+#%{_libdir}/%{name}/%{name}_output_DBI.so
+#%defattr(0644,root,root,0755)
+#%doc COPYING
 
 %files mysql
 %defattr(0755,root,root,0755)
@@ -201,12 +198,13 @@ fi
 
 %changelog
 * Sun Jul 02 2023 Aaron G. Mizrachi P. <aaron@unmanarc.com> - 2.0.8-1
-- update version to 2.08
-- RHEL/Fedora update using hardened systemd
-- drop privileges to user
+- Updated to the latest version, 2.08.
+- Using systemd service configurations for RHEL and Fedora.
+- Incorporated privilege dropping mechanism and automated user creation to enhance security.
+- Removed dependency on DBI due to its absence in contemporary versions of Enterprise Linux.
 
 * Fri Jan 21 2022 Aaron G. Mizrachi P. <aaron@unmanarc.com> - 2.0.7-1
-- update version
+- Updated to the latest version, 2.07.
 
 * Fri Feb 05 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.5-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
