@@ -1,0 +1,8 @@
+/var/log/ulogd/ulogd.log /var/log/ulogd/syslogemu.log /var/log/ulogd/oprint.log /var/log/ulogd/gprint.log /var/log/ulogd/nacct.log {
+    missingok
+    sharedscripts
+    postrotate
+	/bin/killall -HUP ulogd 2> /dev/null || true
+    endscript
+}
+

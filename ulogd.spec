@@ -7,9 +7,10 @@ Group: System Environment/Daemons
 URL: http://www.netfilter.org/projects/%{name}/
 #Source0: http://ftp.netfilter.org/pub/%{name}/%{name}-%{version}.tar.bz2
 # http not allowed in COPR.
-Source0: https://www.netfilter.org/projects/ulogd/files/ulogd-%{version}.tar.bz2
-Source1: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd.service
-Patch0: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd-rpm.patch
+Source0: https://www.netfilter.org/projects/ulogd/files/%{name}-%{version}.tar.bz2
+Source1: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/%{name}.service
+Source2: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/%{name}.logrotate
+Patch0: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/%{name}-rpm.patch
 
 %define cmake cmake
 
@@ -119,10 +120,10 @@ firewall information into an SQLITE database.
 %{__install} -m 0644 %{name}.conf %{buildroot}%{_sysconfdir}/
 
 %{__mkdir_p} -m 0755 %{buildroot}%{_sysconfdir}/logrotate.d/
-%{__install} -m 0644 %{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+%{__install} -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
 %{__mkdir_p} -m 0755 %{buildroot}%{_initrddir}/
-%{__install} -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/%{name}
+%{__install} -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 
 # Add the ulogd user
 getent group %{name} >/dev/null || groupadd -r %{name}
