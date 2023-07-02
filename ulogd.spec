@@ -122,7 +122,7 @@ firewall information into an SQLITE database.
 %{__mkdir_p} -m 0755 %{buildroot}%{_sysconfdir}/logrotate.d/
 %{__install} -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
-%{__mkdir_p} -m 0755 %{buildroot}%{_initrddir}/
+%{__mkdir_p} -m 0755 %{buildroot}%{_unitdir}/
 %{__install} -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 
 # Add the ulogd user
