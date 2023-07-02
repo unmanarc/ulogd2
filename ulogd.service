@@ -1,0 +1,18 @@
+[Unit]
+Description=Userspace logging daemon for netfilter (NFLOG)
+After=network.target
+
+[Service]
+ProtectKernelTunables=true
+ProtectKernelModules=true
+RestrictRealtime=true
+ProtectSystem=full
+ProtectHostname=true
+ProtectHome=true
+ProtectControlGroups=true
+ExecStart=/usr/sbin/ulogd -u ulogd
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+

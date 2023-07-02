@@ -1,14 +1,14 @@
 Summary: Userspace logging daemon for netfilter
 Name: ulogd
-Version: 2.0.7
+Version: 2.0.8
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://www.netfilter.org/projects/%{name}/
 #Source0: http://ftp.netfilter.org/pub/%{name}/%{name}-%{version}.tar.bz2
 # http not allowed in COPR.
-Source0: https://www.netfilter.org/projects/ulogd/files/ulogd-2.0.7.tar.bz2
-Source1: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd.init
+Source0: https://www.netfilter.org/projects/ulogd/files/ulogd-%{version}.tar.bz2
+Source1: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd.service
 Patch0: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd-rpm.patch
 
 %define cmake cmake
@@ -22,18 +22,17 @@ Patch0: https://raw.githubusercontent.com/unmanarc/ulogd2rpm/main/ulogd-rpm.patc
 %endif
 
 BuildRequires: libnetfilter_conntrack-devel >= 0.0.95
-BuildRequires: libnetfilter_log-devel >= 1.0.0
+BuildRequires: libnetfilter_log-devel >= 1.0.2
 BuildRequires: libnfnetlink-devel >= 0.0.39
 BuildRequires: libnetfilter_acct-devel >= 1.0.1 
 BuildRequires: sgml-tools
 BuildRequires: libmnl-devel
-BuildRequires: %{cmake} gcc-c++ gcc
+BuildRequires: %{cmake} gcc-c++ gcc zlib-devel
 
-Requires(post): /sbin/service
-Requires(post): /sbin/chkconfig
-Requires(preun): /sbin/chkconfig
-Requires(preun): /sbin/service
-Requires(postun): /sbin/service
+BuildRequires: systemd
+Requires(post):   coreutils systemd-units systemd-sysv chkconfig
+Requires(postun): coreutils systemd-units
+Requires(preun): systemd-units
 
 %description
 %{name} is a logging daemon that reads event messages coming from the Netfilter
@@ -54,7 +53,11 @@ firewall information through a libdbi interface.
 %package mysql
 Summary: MySQL output plugin for %{name}
 Group: System Environment/Daemons
+%if 0%{?rhel} >= 7 || 0%{?fedora}
+BuildRequires: mariadb-devel
+%else
 BuildRequires: mysql-devel
+%endif
 #BuildRequires: openssl-devel
 Requires: %{name} = %{version}
 %description mysql
@@ -121,16 +124,15 @@ firewall information into an SQLITE database.
 %{__mkdir_p} -m 0755 %{buildroot}%{_initrddir}/
 %{__install} -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/%{name}
 
+# Add the ulogd user
+getent group %{name} >/dev/null || groupadd -r %{name}
+getent passwd %{name} >/dev/null || useradd -r -g %{name} -d /var/lib/%{name} -s /sbin/nologin -c "User for %{name}" %{name}
+
 %post
-/sbin/chkconfig --add %{name}
-/sbin/service %{name} condrestart >/dev/null 2>&1 || :
+%systemd_post %{name}.service
 
 %preun
-# if we are uninstalling...
-if [ "$1" = 0 ]; then
-   /sbin/service %{name} stop > /dev/null 2>&1 ||:
-   /sbin/chkconfig --del %{name}
-fi
+%systemd_preun %{name}.service
 
 %postun
 # if we are upgrading...
@@ -150,6 +152,7 @@ fi
 %{_initrddir}/%{name}
 %{_libdir}/%{name}
 %defattr(0644,root,root,0755)
+%{_unitdir}/%{name}.service
 %doc COPYING
 %doc AUTHORS README
 %doc doc/%{name}.txt doc/%{name}.ps doc/%{name}.html
@@ -195,6 +198,11 @@ fi
 %doc COPYING
 
 %changelog
+* Sun Jul 02 2023 Aaron G. Mizrachi P. <aaron@unmanarc.com> - 2.0.8-1
+- update version to 2.08
+- RHEL/Fedora update using hardened systemd
+- drop privileges to user
+
 * Fri Jan 21 2022 Aaron G. Mizrachi P. <aaron@unmanarc.com> - 2.0.7-1
 - update version
 
