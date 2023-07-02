@@ -125,6 +125,7 @@ firewall information into an SQLITE database.
 %{__mkdir_p} -m 0755 %{buildroot}%{_unitdir}/
 %{__install} -m 0755 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 
+%pre
 # Add the ulogd user
 getent group %{name} >/dev/null || groupadd -r %{name}
 getent passwd %{name} >/dev/null || useradd -r -g %{name} -d /var/lib/%{name} -s /sbin/nologin -c "User for %{name}" %{name}
